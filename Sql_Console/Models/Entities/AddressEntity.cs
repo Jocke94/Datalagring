@@ -16,13 +16,13 @@ internal class AddressEntity
     [Column(TypeName = "nvarchar(50)")]
     public string City { get; set; } = null!;
 
-    public int UserId { get; set; }
+    //public int UserId { get; set; }
     public UserEntity User { get; set; } = null!;
 
     public ICollection<UserEntity> Users = new HashSet<UserEntity>();
 
 
-    public int EmployeeId { get; set; }
+    //public int EmployeeId { get; set; }
     public EmployeeEntity Employee { get; set; } = null!;
 
     public ICollection<EmployeeEntity> Employees = new HashSet<EmployeeEntity>();

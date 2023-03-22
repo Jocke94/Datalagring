@@ -31,4 +31,5 @@ internal class DataContext : DbContext
     public DbSet<CommentEntity> Comments { get; set; } = null!;
     public DbSet<EmployeeEntity> Employees { get; set; } = null!;
     public DbSet<AddressEntity> Addresses { get; set; } = null!;
+    public DbSet<StatusEntity> Statuses { get; set; } = null!;
 }

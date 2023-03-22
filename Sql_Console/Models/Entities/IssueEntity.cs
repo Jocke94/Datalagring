@@ -20,13 +20,12 @@ internal class IssueEntity
     public string Description { get; set; } = null!;
 
     [Required]
-    [Range(1, 3)]
-    public int Status { get; set; }
-
-    [Required]
     public int UserId { get; set; }
     public UserEntity User { get; set; } = null!;
 
+    [Required]
+    public int StatusId { get; set; }
+    public StatusEntity Status { get; set; } = null!;
+
     public ICollection<CommentEntity> Comments = new HashSet<CommentEntity>();
-    
 }
