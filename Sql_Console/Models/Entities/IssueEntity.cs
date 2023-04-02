@@ -12,7 +12,7 @@ internal class IssueEntity
     public DateTime DateOpened { get; set; }
 
     [Required]
-    [Column(TypeName = "nvarchar(50)")]
+    [Column(TypeName = "nvarchar(100)")]
     public string Title { get; set; } = null!;
 
     [Required]
@@ -27,5 +27,5 @@ internal class IssueEntity
     public int StatusId { get; set; }
     public StatusEntity Status { get; set; } = null!;
 
-    public ICollection<CommentEntity> Comments = new HashSet<CommentEntity>();
+    public ICollection<CommentEntity> Comments { get; set; } = new HashSet<CommentEntity>();
 }

@@ -38,17 +38,7 @@ namespace Sql_Console.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Addresses");
                 });
@@ -66,15 +56,10 @@ namespace Sql_Console.Migrations
                     b.Property<DateTime>("CommentDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EmployeeId")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("IssueId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("IssueId");
 
@@ -89,6 +74,9 @@ namespace Sql_Console.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
@@ -101,7 +89,13 @@ namespace Sql_Console.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -127,7 +121,7 @@ namespace Sql_Console.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -166,6 +160,9 @@ namespace Sql_Console.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
@@ -178,7 +175,13 @@ namespace Sql_Console.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -186,42 +189,26 @@ namespace Sql_Console.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Sql_Console.Models.Entities.AddressEntity", b =>
-                {
-                    b.HasOne("Sql_Console.Models.Entities.EmployeeEntity", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Sql_Console.Models.Entities.UserEntity", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Sql_Console.Models.Entities.CommentEntity", b =>
                 {
-                    b.HasOne("Sql_Console.Models.Entities.EmployeeEntity", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Sql_Console.Models.Entities.IssueEntity", "Issue")
-                        .WithMany()
+                        .WithMany("Comments")
                         .HasForeignKey("IssueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Employee");
-
                     b.Navigation("Issue");
+                });
+
+            modelBuilder.Entity("Sql_Console.Models.Entities.EmployeeEntity", b =>
+                {
+                    b.HasOne("Sql_Console.Models.Entities.AddressEntity", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
                 });
 
             modelBuilder.Entity("Sql_Console.Models.Entities.IssueEntity", b =>
@@ -233,7 +220,7 @@ namespace Sql_Console.Migrations
                         .IsRequired();
 
                     b.HasOne("Sql_Console.Models.Entities.UserEntity", "User")
-                        .WithMany()
+                        .WithMany("Issue")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -241,6 +228,27 @@ namespace Sql_Console.Migrations
                     b.Navigation("Status");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Sql_Console.Models.Entities.UserEntity", b =>
+                {
+                    b.HasOne("Sql_Console.Models.Entities.AddressEntity", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("Sql_Console.Models.Entities.IssueEntity", b =>
+                {
+                    b.Navigation("Comments");
+                });
+
+            modelBuilder.Entity("Sql_Console.Models.Entities.UserEntity", b =>
+                {
+                    b.Navigation("Issue");
                 });
 #pragma warning restore 612, 618
         }

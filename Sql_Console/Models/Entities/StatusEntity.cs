@@ -12,5 +12,5 @@ internal class StatusEntity
     [Column(TypeName = "nvarchar(10)")]
     public string Status { get; set; } = "Open";
 
-    public ICollection<IssueEntity> Issues = new HashSet<IssueEntity>(); //get set? *********************************
+    public ICollection<IssueEntity> Issues = new HashSet<IssueEntity>();
 }

@@ -5,7 +5,7 @@ namespace Sql_Console.Contexts;
 
 internal class DataContext : DbContext
 {
-    private readonly string _connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Jocke\source\repos\Sql_Console\Sql_Console\Contexts\sql_db.mdf;Integrated Security=True;Connect Timeout=30";
+    private readonly string _connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Jocke\source\repos\Sql_Console\Sql_Console\Contexts\Sql_Db_Jocke.mdf;Integrated Security=True;Connect Timeout=30";
     
     #region constructors
     public DataContext()
@@ -25,7 +25,6 @@ internal class DataContext : DbContext
         }
     }
     #endregion
-
     public DbSet<UserEntity> Users { get; set; } = null!;
     public DbSet<IssueEntity> Issues { get; set; } = null!;
     public DbSet<CommentEntity> Comments { get; set; } = null!;
