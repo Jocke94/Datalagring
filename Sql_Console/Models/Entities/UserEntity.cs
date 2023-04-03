@@ -21,4 +21,13 @@ internal class UserEntity
     [Required]
     [Column(TypeName = "nvarchar(50)")]
     public string Email { get; set; } = null!;
+
+    [Required]
+    [Column(TypeName = "nvarchar(50)")]
+    public string PhoneNumber { get; set; } = null!;
+
+
+    public int AddressId { get; set; }
+    public AddressEntity Address { get; set; } = null!;
+    public ICollection<IssueEntity> Issue { get; set; } = new HashSet<IssueEntity>();
 }

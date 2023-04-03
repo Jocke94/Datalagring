@@ -8,18 +8,14 @@ internal class CommentEntity
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
 
+    [Required]
     [Column(TypeName = "nvarchar(200)")]
     public string Comment { get; set; } = null!;
 
     [Required]
     public DateTime CommentDate { get; set; }
 
-
     [Required]
     public Guid IssueId { get; set; }
-    public IssueEntity Issue { get; set; } = null!; //??
-
-    [Required]
-    public int EmployeeId { get; set; }
-    public EmployeeEntity Employee { get; set; } = null!;
+    public IssueEntity Issue { get; set; } = null!;
 }

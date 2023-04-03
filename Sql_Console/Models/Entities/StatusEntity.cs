@@ -10,7 +10,7 @@ internal class StatusEntity
 
     [Required]
     [Column(TypeName = "nvarchar(10)")]
-    public string Status { get; set; } = "Open";
+    public string Status { get; set; } = null!;
 
-    public ICollection<IssueEntity> Issues = new HashSet<IssueEntity>(); //get set? *********************************
+    public ICollection<IssueEntity> Issues = new HashSet<IssueEntity>();
 }
