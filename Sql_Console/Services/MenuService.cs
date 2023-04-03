@@ -311,8 +311,51 @@ internal class MenuService
     public async Task ChangeIssueStatus()
     {
         Console.Clear();
-
-        Console.ReadKey();
+        Console.Write("Enter issue ID (guid): ");
+        Guid.TryParse(Console.ReadLine(), out Guid searchGuid);
+        var issueResult = await IssueService.GetIssueByIdAsync(searchGuid);
+        bool inputLoop = true;
+        while (inputLoop)
+        {
+            Console.Clear();
+            if (issueResult != null)
+            {
+                Console.WriteLine($"ID: {issueResult.Id}");
+                Console.WriteLine($"Submitted by: {issueResult.FirstName} {issueResult.LastName}");
+                Console.WriteLine($"At: {issueResult.DateOpened}");
+                Console.WriteLine($"Status: {issueResult.Status}");
+                Console.WriteLine($"Title: {issueResult.Title}");
+                Console.WriteLine($"Description: {issueResult.Description}");
+                var comments = await CommentService.GetAllCommentsForIssueAsync(issueResult.Id);
+                if (comments != null)
+                {
+                    Console.WriteLine("\nComments");
+                    foreach (var comment in comments)
+                    {
+                        Console.WriteLine($"\n{comment.CommentDate}");
+                        Console.WriteLine(comment.CommentString);
+                    }
+                }
+                Console.WriteLine("\nChange status");
+                Console.WriteLine($"\n[1] Open");
+                Console.WriteLine($"[2] Ongoing");
+                Console.WriteLine($"[3] Closed");
+                Console.Write("\nSelect an option: ");
+                Int32.TryParse(Console.ReadLine(), out int statusChoice);
+                if (statusChoice >= 1 && statusChoice <= 3)
+                {
+                    await IssueService.ChangeIssueStatusAsync(issueResult.Id, statusChoice);
+                    inputLoop = false;
+                }
+            }
+            else
+            {
+                Console.WriteLine("\nNo issue found.");
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                return;
+            }
+        }
     }
     public async Task CommentOnIssue()
     {
@@ -332,6 +375,16 @@ internal class MenuService
                 Console.WriteLine($"Status: {issueResult.Status}");
                 Console.WriteLine($"Title: {issueResult.Title}");
                 Console.WriteLine($"Description: {issueResult.Description}");
+                var comments = await CommentService.GetAllCommentsForIssueAsync(issueResult.Id);
+                if (comments != null)
+                {
+                    Console.WriteLine("\nComments");
+                    foreach (var comment in comments)
+                    {
+                        Console.WriteLine($"\n{comment.CommentDate}");
+                        Console.WriteLine(comment.CommentString);
+                    }
+                }
             }
             else
             {
@@ -357,9 +410,6 @@ internal class MenuService
                 Console.ReadKey();
             }
         }
-        Console.Clear();
-        Console.WriteLine("\nPress any key to continue...");
-        Console.ReadKey();
     }
     public async Task ListAllIssues()
     {
@@ -377,7 +427,7 @@ internal class MenuService
             Console.WriteLine($"Title: {issue.Title}");
             Console.WriteLine($"Description: {issue.Description}");
             var comments = await CommentService.GetAllCommentsForIssueAsync(issue.Id);
-            if (comments != null)
+            if (comments.Count() > 0)
             {
                 Console.WriteLine("\nComments");
                 foreach (var comment in comments)
@@ -406,11 +456,22 @@ internal class MenuService
             Console.WriteLine($"Status: {issueResult.Status}");
             Console.WriteLine($"Title: {issueResult.Title}");
             Console.WriteLine($"Description: {issueResult.Description}");
+            var comments = await CommentService.GetAllCommentsForIssueAsync(issueResult.Id);
+            if (comments != null)
+            {
+                Console.WriteLine("\nComments");
+                foreach (var comment in comments)
+                {
+                    Console.WriteLine($"\n{comment.CommentDate}");
+                    Console.WriteLine(comment.CommentString);
+                }
+            }
         }
         else
         {
-            Console.WriteLine("\nNo issue found.");
+            Console.WriteLine("No issue found.");
         }
-
+        Console.WriteLine("\nPress any key to continue...");
+        Console.ReadKey();
     }
 }

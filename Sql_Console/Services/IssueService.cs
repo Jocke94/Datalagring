@@ -62,4 +62,19 @@ internal class IssueService
             return null!;
         }
     }
+
+    public static async Task ChangeIssueStatusAsync(Guid searchedId, int statusCode)
+    {
+        var _issue = await _context.Issues.FirstOrDefaultAsync(x => x.Id == searchedId);
+        if (_issue != null)
+        {
+            if (_issue.StatusId != statusCode)
+            {
+                _issue.StatusId = statusCode;
+                _context.Update(_issue);
+                await _context.SaveChangesAsync();
+            }
+        }
+        
+    }
 }
