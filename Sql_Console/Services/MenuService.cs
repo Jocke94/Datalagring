@@ -70,6 +70,7 @@ internal class MenuService
                 Console.WriteLine("\nNo user found. Please try again.");
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
+                return;
             }
         }
         
@@ -112,6 +113,7 @@ internal class MenuService
                 Console.WriteLine("\nNo employee found. Please try again.");
                 Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
+                return;
             }
         }
 
@@ -287,7 +289,7 @@ internal class MenuService
         while (inputLoop)
         {
             Console.Clear();
-            Console.WriteLine("Submiting issue\n");
+            Console.WriteLine("Submitting issue\n");
             Console.Write("Title: ");
             newIssue.Title = Console.ReadLine() ?? "";
             Console.Write("Description: ");
@@ -320,22 +322,7 @@ internal class MenuService
             Console.Clear();
             if (issueResult != null)
             {
-                Console.WriteLine($"ID: {issueResult.Id}");
-                Console.WriteLine($"Submitted by: {issueResult.FirstName} {issueResult.LastName}");
-                Console.WriteLine($"At: {issueResult.DateOpened}");
-                Console.WriteLine($"Status: {issueResult.Status}");
-                Console.WriteLine($"Title: {issueResult.Title}");
-                Console.WriteLine($"Description: {issueResult.Description}");
-                var comments = await CommentService.GetAllCommentsForIssueAsync(issueResult.Id);
-                if (comments != null)
-                {
-                    Console.WriteLine("\nComments");
-                    foreach (var comment in comments)
-                    {
-                        Console.WriteLine($"\n{comment.CommentDate}");
-                        Console.WriteLine(comment.CommentString);
-                    }
-                }
+                await OutputIssue(issueResult);
                 Console.WriteLine("\nChange status");
                 Console.WriteLine($"\n[1] Open");
                 Console.WriteLine($"[2] Ongoing");
@@ -369,22 +356,7 @@ internal class MenuService
             Console.Clear();
             if (issueResult != null)
             {
-                Console.WriteLine($"ID: {issueResult.Id}");
-                Console.WriteLine($"Submitted by: {issueResult.FirstName} {issueResult.LastName}");
-                Console.WriteLine($"At: {issueResult.DateOpened}");
-                Console.WriteLine($"Status: {issueResult.Status}");
-                Console.WriteLine($"Title: {issueResult.Title}");
-                Console.WriteLine($"Description: {issueResult.Description}");
-                var comments = await CommentService.GetAllCommentsForIssueAsync(issueResult.Id);
-                if (comments != null)
-                {
-                    Console.WriteLine("\nComments");
-                    foreach (var comment in comments)
-                    {
-                        Console.WriteLine($"\n{comment.CommentDate}");
-                        Console.WriteLine(comment.CommentString);
-                    }
-                }
+                await OutputIssue(issueResult);
             }
             else
             {
@@ -420,22 +392,7 @@ internal class MenuService
         
         foreach (var issue in allIssues)
         {
-            Console.WriteLine($"ID: {issue.Id}");
-            Console.WriteLine($"Submitted by: {issue.FirstName} {issue.LastName}");
-            Console.WriteLine($"At: {issue.DateOpened}");
-            Console.WriteLine($"Status: {issue.Status}");
-            Console.WriteLine($"Title: {issue.Title}");
-            Console.WriteLine($"Description: {issue.Description}");
-            var comments = await CommentService.GetAllCommentsForIssueAsync(issue.Id);
-            if (comments.Count() > 0)
-            {
-                Console.WriteLine("\nComments");
-                foreach (var comment in comments)
-                {
-                    Console.WriteLine($"\n{comment.CommentDate}");
-                    Console.WriteLine(comment.CommentString);
-                }
-            }
+            await OutputIssue(issue);
             Console.WriteLine("────────────────────────────────────────────────");
         }
         Console.WriteLine("\nPress any key to continue...");
@@ -450,22 +407,7 @@ internal class MenuService
         Console.Clear();
         if (issueResult != null)
         {
-            Console.WriteLine($"ID: {issueResult.Id}");
-            Console.WriteLine($"Submitted by: {issueResult.FirstName} {issueResult.LastName}");
-            Console.WriteLine($"At: {issueResult.DateOpened}");
-            Console.WriteLine($"Status: {issueResult.Status}");
-            Console.WriteLine($"Title: {issueResult.Title}");
-            Console.WriteLine($"Description: {issueResult.Description}");
-            var comments = await CommentService.GetAllCommentsForIssueAsync(issueResult.Id);
-            if (comments != null)
-            {
-                Console.WriteLine("\nComments");
-                foreach (var comment in comments)
-                {
-                    Console.WriteLine($"\n{comment.CommentDate}");
-                    Console.WriteLine(comment.CommentString);
-                }
-            }
+            await OutputIssue(issueResult);
         }
         else
         {
@@ -473,5 +415,24 @@ internal class MenuService
         }
         Console.WriteLine("\nPress any key to continue...");
         Console.ReadKey();
+    }
+    public async Task OutputIssue(Issue issue)
+    {
+        Console.WriteLine($"ID: {issue.Id}");
+        Console.WriteLine($"Submitted by: {issue.FirstName} {issue.LastName}");
+        Console.WriteLine($"At: {issue.DateOpened}");
+        Console.WriteLine($"Title: {issue.Title}");
+        Console.WriteLine($"Description: {issue.Description}");
+        Console.WriteLine($"Status: {issue.Status}");
+        var comments = await CommentService.GetAllCommentsForIssueAsync(issue.Id);
+        if (comments.Count() > 0)
+        {
+            Console.WriteLine("\nComments:");
+            foreach (var comment in comments)
+            {
+                Console.WriteLine($"\n{comment.CommentDate}");
+                Console.WriteLine(comment.CommentString);
+            }
+        }
     }
 }

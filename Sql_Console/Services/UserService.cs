@@ -75,14 +75,4 @@ internal class UserService
             return null!;
         }
     }
-
-    public static async Task DeleteUserAsync(string email)
-    {
-        var _user = await _context.Users.Include(x => x.Address).FirstOrDefaultAsync(x => x.Email == email);
-        if (_user != null)
-        {
-            _context.Remove(_user);
-            await _context.SaveChangesAsync();
-        }
-    }
 }
