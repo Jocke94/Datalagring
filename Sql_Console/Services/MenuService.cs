@@ -15,13 +15,14 @@ namespace Sql_Console.Services
             Console.WriteLine("[5] List all users");
             Console.WriteLine("[6] List all employees");
             Console.WriteLine("[7] List all issues");
-            Console.WriteLine("[8] Find user or employee");
+            Console.WriteLine("[8] Search for specific user or employee");
+            Console.WriteLine("[9] Search for specific issue");
             Console.Write("\nSelect an option: ");
             Int32.TryParse(Console.ReadLine(), out int mainMenuChoice);
             switch (mainMenuChoice)
             {
                 case 1:
-                    UserMenu();
+                    await UserMenu();
                     break;
                 case 2:
                     EmployeeMenu();
@@ -39,22 +40,44 @@ namespace Sql_Console.Services
                     await ListAllEmployees();
                     break;
                 case 7:
-                    ListAllIssues();
+                    await ListAllIssues();
                     break;
                 case 8:
                     await SearchUsersAndEmployees();
                     break;
+                case 9:
+                    await SearchIssue();
+                    break;
             }
         }
     
-        static void UserMenu()
+        public async Task UserMenu()
         {
-            int currentUser = 1; //????
+            bool search = true;
+            var currentUser = new User();
+            while (search)
+            {
+                Console.Clear();
+                Console.Write("Enter a user email: ");
+                string inputEmail = Console.ReadLine() ?? "";
+                currentUser = await UserService.GetUserByEmailAsync(inputEmail);
+                if (currentUser != null)
+                {
+                    search = false;
+                }
+                else
+                {
+                    Console.WriteLine("No user found. Please try again.");
+                    Console.WriteLine("\nPress any key to continue...");
+                    Console.ReadKey();
+                }
+            }
+            
             bool userMenu = true;
             while (userMenu)
             {
                 Console.Clear();
-                Console.WriteLine($"User menu - {currentUser}");
+                Console.WriteLine($"User menu - {currentUser.FirstName} {currentUser.LastName}");
                 Console.WriteLine("\n[1] Submit issue");
                 Console.WriteLine("[2] View your issues");
                 Console.WriteLine("[3] Back");
@@ -63,10 +86,10 @@ namespace Sql_Console.Services
                 switch (userMenuChoice)
                 {
                     case 1:
-                        SubmitIssue();
+                        await SubmitIssue(currentUser);
                         break;
                     case 2:
-                        ListUserIssues(currentUser); //ListUserIssues(currentUser??????)
+                        //ListUserIssues(currentUser); //ListUserIssues(currentUser??????)
                         break;
                     case 3:
                         userMenu = false;
@@ -136,8 +159,7 @@ namespace Sql_Console.Services
         {
             Console.Clear();
             Console.Write("Enter a user or employee email: ");
-            string searchString = Console.ReadLine() ?? "";
-            
+            string searchString = Console.ReadLine() ?? "";  
             var userResult = await UserService.GetUserByEmailAsync(searchString);
             var employeeResult = await EmployeeService.GetEmployeeByEmailAsync(searchString);
             if (userResult != null)
@@ -238,11 +260,33 @@ namespace Sql_Console.Services
             }
             await EmployeeService.AddEmployee(newEmployee);
         }
-        static void SubmitIssue()
+        public async Task SubmitIssue(User currentUser)
         {
-            Console.Clear();
-            Console.WriteLine("Submit issue");
-            Console.ReadLine();
+            var newIssue = new Issue();
+            bool inputLoop = true;
+            while (inputLoop)
+            {
+                Console.Clear();
+                Console.WriteLine("Submiting issue\n");
+                Console.Write("Title: ");
+                newIssue.Title = Console.ReadLine() ?? "";
+                Console.Write("Description: ");
+                newIssue.Description = Console.ReadLine() ?? "";
+                if (!String.IsNullOrEmpty(newIssue.Title) && !String.IsNullOrEmpty(newIssue.Description))
+                {
+                    inputLoop = false;
+                }
+                else
+                {
+                    Console.WriteLine("\nOne or more fields are empty. Please try again.");
+                    Console.WriteLine("\nPress any key to continue...");
+                    Console.ReadKey();
+                }
+            }
+            newIssue.DateOpened = DateTime.Now;
+            newIssue.StatusId = 1;
+            newIssue.UserId = currentUser.Id;
+            await IssueService.SubmitIssueAsync(newIssue);
         }
         static void ListUserIssues(int userId) //ska ta input
         {
@@ -256,11 +300,47 @@ namespace Sql_Console.Services
             Console.WriteLine("Edit issue");
             Console.ReadLine();
         }
-        static void ListAllIssues()
+        public async Task ListAllIssues()
         {
             Console.Clear();
-            Console.WriteLine("Viewing all issues");
-            Console.ReadLine();
+            Console.WriteLine("Listing all issues\n");
+            Console.WriteLine("────────────────────────────────────────────────");
+            var allIssues = await IssueService.GetAllIssuesAsync();
+            foreach (var issue in allIssues)
+            {
+                Console.WriteLine($"ID: {issue.Id}");
+                Console.WriteLine($"Submitted by: {issue.FirstName} {issue.LastName}");
+                Console.WriteLine($"At: {issue.DateOpened}");
+                Console.WriteLine($"Status: {issue.Status}");
+                Console.WriteLine($"Title: {issue.Title}");
+                Console.WriteLine($"Description: {issue.Description}");
+                Console.WriteLine("────────────────────────────────────────────────");
+            }
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
+        }
+        public async Task SearchIssue()
+        {
+            Console.Clear();
+            Console.Write("Enter issue ID (guid): ");
+            Guid.TryParse(Console.ReadLine(), out Guid searchGuid);
+            var issueResult = await IssueService.GetIssueByIdAsync(searchGuid);
+            Console.Clear();
+            if (issueResult != null)
+            {
+                Console.WriteLine($"ID: {issueResult.Id}");
+                Console.WriteLine($"Submitted by: {issueResult.FirstName} {issueResult.LastName}");
+                Console.WriteLine($"At: {issueResult.DateOpened}");
+                Console.WriteLine($"Status: {issueResult.Status}");
+                Console.WriteLine($"Title: {issueResult.Title}");
+                Console.WriteLine($"Description: {issueResult.Description}");
+            }
+            else
+            {
+                Console.WriteLine("\nNo issue found.");
+            }
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
         }
     }
 }
