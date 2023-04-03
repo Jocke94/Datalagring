@@ -22,7 +22,6 @@ internal class IssueService
         await _context.SaveChangesAsync();
     }
 
-    
     public static async Task<IEnumerable<Issue>> GetAllIssuesAsync()
     {
         var _issues = new List<Issue>();
@@ -41,7 +40,7 @@ internal class IssueService
         }
         return _issues;
     }
-    
+
     public static async Task<Issue> GetIssueByIdAsync(Guid searchedId)
     {
         var _issue = await _context.Issues.Include(x => x.User).Include(x => x.Status).FirstOrDefaultAsync(x => x.Id == searchedId);
