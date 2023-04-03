@@ -1,6 +1,6 @@
 # Datalagring - Joakim Larsson
 ### Instruktioner
-Börja med att ändra _connectionString i DataContext.cs
+Börja med att ändra _connectionString i DataContext.cs<br>
 Databasfilen som medföljer har ett par användare, addresser, ärenden osv.
 #### OBS! 
 Om du hellre vill skapa en egen databas från entiteterna så är det viktigt att tabellen statuses innehåller följande: <br>
